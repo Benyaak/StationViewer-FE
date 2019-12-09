@@ -15,6 +15,8 @@ import store from './store';
 
 Vue.config.productionTip = false;
 
+let app = '';
+
 const firebaseConfig = {
   apiKey: 'AIzaSyALzYVgGC2z2tacEFyBVN_UIHHGoybqQOU',
   authDomain: 'proiect-tic-261309.firebaseapp.com',
@@ -27,8 +29,12 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-new Vue({
-  router,
-  store,
-  render: h => h(App),
-}).$mount('#app');
+firebase.auth().onAuthStateChanged(() => {
+  if (!app) {
+    app = new Vue({
+      router,
+      store,
+      render: h => h(App),
+    }).$mount('#app');
+  }
+});
