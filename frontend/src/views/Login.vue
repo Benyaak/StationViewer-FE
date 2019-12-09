@@ -11,7 +11,7 @@
       placeholder="Password"
     />
     <button @click="login">Log In</button>
-    <p class="social-button-container">or Sign In with Google</p>
+    <p>or Sign In with Google</p>
     <button class="social-button" @click="socialLogin">
       <img alt="Google Button" src="../assets/google-logo.png" />
     </button>
@@ -67,8 +67,8 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.social-button img {
-  width: 120px;
+.social-button {
+  border: none;
 }
 
 .login {
