@@ -1,0 +1,14 @@
+{
+  "name": "proiect-tic",
+  "version": "1.0.0",
+  "description": "TIC Project Back-end",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dan Andrei Ghinea",
+  "license": "MIT",
+  "dependencies": {
+    "firebase-admin": "^8.8.0"
+  }
+}
