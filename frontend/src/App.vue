@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img alt="Petrol Logo" src="./assets/petrolLogo.jpg" />
     <router-view/>
   </div>
 </template>

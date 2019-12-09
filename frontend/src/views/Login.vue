@@ -8,8 +8,13 @@
       name="password"
       v-model="password"
       id="passwordInput"
-      placeholder="Password" />
+      placeholder="Password"
+    />
     <button @click="login">Log In</button>
+    <p class="social-button-container">or Sign In with Google</p>
+    <button class="social-button" @click="socialLogin">
+      <img alt="Google Button" src="../assets/google-logo.png" />
+    </button>
     <p>
       If you do not have an account, you can create one
       <router-link to="/sign-up">here</router-link>
@@ -30,21 +35,42 @@ export default {
   },
   methods: {
     login() {
-      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
-        (user) => {
-          console.log(user);
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then(
+          (user) => {
+            console.log(user);
+            this.$router.replace('home');
+          },
+          (err) => {
+            throw err;
+          },
+        );
+    },
+
+    socialLogin() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then((result) => {
+          console.log(result);
           this.$router.replace('home');
-        },
-        (err) => {
-          throw err;
-        },
-      );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
+.social-button img {
+  width: 120px;
+}
+
 .login {
   display: flex;
   flex-direction: column;
