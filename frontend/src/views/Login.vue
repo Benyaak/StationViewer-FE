@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable */
 <template>
   <div class="login">
@@ -59,7 +60,7 @@ export default {
           this.$router.replace('home');
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
         });
     },
   },

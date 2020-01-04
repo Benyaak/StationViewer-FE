@@ -17,15 +17,24 @@
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+        <button class="btn btn-outline-success my-2 my-sm-0" @click="logout">Logout</button>
       </form>
     </div>
   </nav>
 </template>
 
 <script>
+import firebase from 'firebase';
+
 export default {
   name: 'Navbar',
+  methods: {
+    logout() {
+      firebase.auth().signOut().then(() => {
+        this.$router.replace('login');
+      });
+    },
+  },
 };
 </script>
 

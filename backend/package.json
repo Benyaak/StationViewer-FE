@@ -9,6 +9,16 @@
   "author": "Dan Andrei Ghinea",
   "license": "MIT",
   "dependencies": {
-    "firebase-admin": "^8.8.0"
+    "@google-cloud/firestore": "^3.3.0",
+    "body-parser": "^1.18.2",
+    "client-sessions": "^0.8.0",
+    "compression": "^1.7.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.2",
+    "firebase": "^5.7.2",
+    "firebase-admin": "^6.5.0",
+    "firebase-functions": "^2.1.0",
+    "jsonwebtoken": "^8.4.0",
+    "lodash": "^4.17.11"
   }
 }

@@ -1,0 +1,11 @@
+{
+    "session": {
+      "secret": "2G7iWVh6fZ8V9rNnxapUkpasoz70jaZ17Lx3sUa6"
+    },
+    "firebase": {
+      "apiKey": "AIzaSyALzYVgGC2z2tacEFyBVN_UIHHGoybqQOU",
+      "authDomain": "proiect-tic-261309.firebaseapp.com",
+      "databaseURL": "https://proiect-tic-261309.firebaseio.com",
+      "storageBucket": "proiect-tic-261309.appspot.com"
+    }
+}
