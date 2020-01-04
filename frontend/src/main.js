@@ -13,7 +13,10 @@ import './registerServiceWorker';
 import router from './router';
 import store from './store';
 
+require('firebase/firestore');
+
 Vue.config.productionTip = false;
+Vue.prototype.$firebase = firebase;
 
 let app = '';
 
@@ -24,7 +27,7 @@ const firebaseConfig = {
   projectId: 'proiect-tic-261309',
   storageBucket: 'proiect-tic-261309.appspot.com',
   messagingSenderId: '977431146617',
-  appId: '1:977431146617:web:8a3164983c45355d05e4a8',
+  appId: '1:977431146617:web:c04c32bce192bf7b05e4a8',
 };
 
 firebase.initializeApp(firebaseConfig);
