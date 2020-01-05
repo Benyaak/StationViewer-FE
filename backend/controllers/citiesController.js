@@ -23,15 +23,16 @@ const controller = {
   },
   create: async (req, res) => {
 
-    citiesRef.doc(req.body.cityDocumentId).set({
-      cityId: req.body.cityId,
-      cityName: req.body.cityName,
-    });
+    // citiesRef.doc(req.body.cityDocumentId).set({
+    //   cityId: req.body.cityId,
+    //   cityName: req.body.cityName,
+    // });
 
     citiesRef.doc(req.body.cityDocumentId)
       .collection('stations')
       .doc(req.body.stationDocumentId)
       .set({
+        stationId: req.body.stationId,
         stationName: req.body.stationName,
         stationPrices: req.body.stationPrices
       });
@@ -62,6 +63,11 @@ const controller = {
     let stationRef = cityRef.collection('stations').doc(req.params.stationId);
     let transaction = database.runTransaction((t) => {
       return t.get(stationRef).then((station) => {
+        if (station.data().stationId && req.body.stationId) {
+          let newStationId = req.body.stationId;
+          t.update(stationRef, { stationId: newStationId });
+        }
+
         if (station.data().stationName && req.body.stationName) {
           let newStationName = req.body.stationName;
           t.update(stationRef, { stationName: newStationName });

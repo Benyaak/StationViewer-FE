@@ -1,12 +1,11 @@
 <template>
-  <div class="home">
+  <div class="home container">
     <h1>Stations List</h1>
     <Station />
   </div>
 </template>
 
 <script>
-
 import Station from '../components/Station.vue';
 
 export default {
@@ -16,3 +15,7 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+
+</style>

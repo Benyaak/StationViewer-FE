@@ -1,4 +1,3 @@
-import firebase from 'firebase';
 import Vue from 'vue';
 import Router from 'vue-router';
 
@@ -32,21 +31,8 @@ const router = new Router({
       path: '/home',
       name: 'Home',
       component: Home,
-      meta: {
-        requiresAuth: true,
-      },
     },
   ],
-});
-
-router.beforeEach((to, from, next) => {
-  // eslint-disable-next-line prefer-destructuring
-  const currentUser = firebase.auth().currentUser;
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-
-  if (requiresAuth && !currentUser) next('login');
-  else if (!requiresAuth && currentUser) next('home');
-  else next();
 });
 
 export default router;

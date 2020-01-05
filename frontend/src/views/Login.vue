@@ -1,104 +1,70 @@
-/* eslint-disable no-console */
-/* eslint-disable */
 <template>
-  <div class="login">
-    <h3>Sign in</h3>
-    <input type="text" name="username" v-model="email" id="usernameInput" placeholder="Username" />
-    <input
-      type="password"
-      name="password"
-      v-model="password"
-      id="passwordInput"
-      placeholder="Password"
-    />
-    <button @click="login">Log In</button>
-    <p>or Sign In with Google</p>
-    <button class="social-button" @click="socialLogin">
-      <img alt="Google Button" src="../assets/google-logo.png" />
-    </button>
-    <p>
-      If you do not have an account, you can create one
-      <router-link to="/sign-up">here</router-link>
-    </p>
-  </div>
+    <div class="container" id="login" v-if="!authenticated">
+      <div class="d-flex justify-content-center">
+      <form>
+        <div class="form-group">
+          <label for="emailInput">Email address</label>
+          <input type="email" class="form-control" v-model="input.email"
+            id="emailInput" placeholder="Email Address">
+        </div>
+
+        <div class="form-group">
+          <label for="passwordInput">Password</label>
+          <input type="password" class="form-control" v-model="input.password"
+            id="passwordInput" placeholder="Password">
+        </div>
+
+        <button type="button" v-on:click="login()" class="btn btn-primary">Login</button>
+      </form>
+      </div>
+    </div>
 </template>
 
 <script>
-import firebase from 'firebase';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import toastr from 'toastr';
 
 export default {
-  name: 'login',
+  name: 'Login',
   data() {
     return {
-      email: '',
-      password: '',
+      input: {
+        email: '',
+        password: '',
+      },
+      authenticated: false,
     };
   },
   methods: {
     login() {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then(
-          (user) => {
-            console.log(user);
-            this.$router.replace('home');
-          },
-          (err) => {
-            throw err;
-          },
-        );
+      const api = axios.create({
+        withCredentials: true,
+      });
+      if (this.input.email !== '' && this.input.password !== '') {
+        api
+          .post('http://localhost:3000/api/auth/login', {
+            email: this.input.email,
+            password: this.input.password,
+          })
+          .then((response) => {
+            toastr.success(response.data.message);
+            Cookies.set('user-logIn', '1', { expires: 1 / 12 });
+            this.$root.$emit('logged', true);
+            this.$router.replace({ name: 'Home' });
+          })
+          .catch((err) => {
+            toastr.error(err.response.data.message);
+          });
+      }
     },
-
-    socialLogin() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then((result) => {
-          console.log(result);
-          this.$router.replace('home');
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
+  },
+  beforeCreate() {
+    this.authenticated = Cookies.get('user-logIn') === '1';
+    if (this.authenticated) this.$router.replace({ name: 'Home' });
   },
 };
 </script>
 
-<style lang='scss' scoped>
-.social-button {
-  border: none;
-}
-
-.login {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
-}
-
-input {
-  margin: 5px 0;
-  width: 20%;
-  padding: 15px;
-}
-
-button {
-  margin-top: 20px;
-  width: 10%;
-  cursor: pointer;
-}
-
-p {
-  margin-top: 40px;
-  font-size: 13px;
-}
-
-p a {
-  text-decoration: underline;
-  cursor: pointer;
-}
+<style scoped>
 </style>
