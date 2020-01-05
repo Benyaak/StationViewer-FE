@@ -2,8 +2,6 @@ const database = require('../firebaseAdmin');
 
 const firebaseKeyGetter = {
     getUserKey : async (id) => {
-        // const snapshot = await database.ref('users').once('value');
-        // const users = _.toArray(snapshot.val())
         const users = [];
         await database.collection('users').get().then((snapshot) => {
             snapshot.forEach((user) => {

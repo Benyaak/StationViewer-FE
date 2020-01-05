@@ -32,7 +32,6 @@ const controller = {
                 });
             });
         const user = users.filter(user => user.password === password && user.email === email);
-        console.log(user);
         if (user.length === 0) {
             res.status(403).send({ message: "Incorrect email/password" });
         } else {
