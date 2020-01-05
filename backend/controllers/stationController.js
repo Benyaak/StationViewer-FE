@@ -7,9 +7,9 @@ const controller = {
             .then((snapshot) => {
                 snapshot.forEach((station) => {
                     // TODO: Return all the objects
-                    res.status(200);
                     console.log(station.id, '=>', station.data());
                 });
+                res.status(200);
             })
             .catch((err) => {
                 res.status(404).send()

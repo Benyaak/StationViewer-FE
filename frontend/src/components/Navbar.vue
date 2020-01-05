@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="/home">Gas Station Viewer</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse"
     data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02"
     aria-expanded="false" aria-label="Toggle navigation">
@@ -10,10 +10,10 @@
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home</a>
+           <router-link :to="'/'" class="nav-link">Home</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
+          <router-link :to="'/about'" class="nav-link">About</router-link>
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const database = require('../firebaseAdmin');
 
 let citiesRef = database.collection('cities');
@@ -74,14 +73,14 @@ const controller = {
         }
       });
     })
-    .then((result) => {
-      console.log('Updated');
-      res.status(200).send({ message: 'Station Updated'});
-    })
-    .catch((err) => {
-      console.log('Error Updating', err);
-      res.status(500).send({message: 'Station did not update!'});
-    })
+      .then((result) => {
+        console.log('Updated');
+        res.status(200).send({ message: 'Station Updated' });
+      })
+      .catch((err) => {
+        console.log('Error Updating', err);
+        res.status(500).send({ message: 'Station did not update!' });
+      })
   },
   delete: async (req, res) => {
     let cities = await citiesRef.get();
