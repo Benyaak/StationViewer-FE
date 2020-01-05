@@ -1,13 +1,5 @@
 const _ = require('lodash');
-const admin = require('firebase-admin');
-const serviceAccount = require("../proiect-tic-261309-firebase-adminsdk-azkgl-797a32713b.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://proiect-tic-261309.firebaseio.com"
-});
-
-const database = admin.firestore();
+const database = require('../firebaseAdmin');
 
 const controller = {
     find: async (req, res) => {
@@ -51,7 +43,7 @@ const controller = {
         }).catch((err) => {
             console.log('Error Updating');
             res.status(500).send({ message: JSON.stringify(err)});
-        })
+        });
     },
     delete: async (req, res) => {
         let documentRef = database.collection('stations').doc(req.params.id).delete();
