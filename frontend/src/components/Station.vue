@@ -50,8 +50,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="station in sortedStations" v-bind:key="station.stationData.stationCity">
-              <template v-if="editId === station.stationData.stationCity">
+            <tr v-for="station in sortedStations"
+              v-bind:key="station.stationData.stationId">
+              <template v-if="editId === station.stationData.stationId">
                 <td>
                   <input v-model="editStationData.stationCity" type="text"
                     :placeholder="station.stationData.stationCity">
@@ -98,14 +99,6 @@
                       )"
                       class="fa fa-trash"></i>
                   </a>
-                  <router-link
-                    :to="{
-                      name:'stationPage',
-                      params: { stationId: station.stationId }
-                    }"
-                    class="icon"
-                  >
-                  </router-link>
                 </td>
               </template>
             </tr>
@@ -124,13 +117,15 @@ import toastr from 'toastr';
 export default {
   data() {
     return {
-      editId: '',
+      editId: null,
       stationData: {
+        stationId: null,
         stationName: '',
         stationPrices: [],
         stationCity: '',
       },
       editStationData: {
+        stationId: null,
         stationName: '',
         stationPrices: [],
         stationCity: '',
@@ -184,7 +179,8 @@ export default {
       api.post('http://localhost:3000/api/cities/', this.stationData)
         .then((response) => {
           toastr.success(response.data.message);
-          this.stationData.stationId = null;
+          // eslint-disable-next-line no-plusplus
+          this.stationData.stationCity = '';
           this.stationData.stationName = '';
           this.stationData.stationPrices = [];
         })
@@ -205,14 +201,14 @@ export default {
         });
     },
     onEdit(station) {
-      this.editId = station.stationCity;
+      this.editId = station.stationId;
       this.editStationData.stationCity = station.stationCity;
-      this.editStationData.title = station.stationName;
+      this.editStationData.stationName = station.stationName;
       this.editStationData.description = station.stationPrices;
     },
     onCancel() {
       this.editId = null;
-      this.stationData.stationCity = null;
+      this.stationData.stationCity = '';
       this.stationData.stationName = '';
       this.stationData.stationPrices = [];
     },

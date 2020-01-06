@@ -20,5 +20,8 @@
     "firebase-functions": "^2.1.0",
     "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "faker": "^4.1.0"
   }
 }

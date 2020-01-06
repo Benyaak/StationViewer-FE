@@ -1,6 +1,7 @@
 const database = require('../firebaseAdmin');
-
 let citiesRef = database.collection('cities');
+
+let iter = 105;
 
 const controller = {
   find: async (req, res) => {
@@ -26,6 +27,7 @@ const controller = {
       .collection('stations')
       .doc()
       .set({
+        stationId: iter++,
         stationName: req.body.stationName,
         stationPrices: req.body.stationPrices,
         stationCity: req.body.stationCity
@@ -58,9 +60,9 @@ const controller = {
     stationRef.then((querySnapshot) => {
       querySnapshot.forEach((station) => {
         cityRef.collection('stations').doc(station.id).update({
-          stationCity: req.body.stationCity,
-          stationName: req.body.stationCity,
-          stationPrices: req.body.stationPrices
+            stationCity: req.body.stationCity,
+            stationName: req.body.stationName,
+            stationPrices: req.body.stationPrices.split(',').map(Number)
         });
       });
     });
