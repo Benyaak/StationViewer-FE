@@ -22,21 +22,15 @@ const controller = {
     res.status(200);
   },
   create: async (req, res) => {
-
-    // citiesRef.doc(req.body.cityDocumentId).set({
-    //   cityId: req.body.cityId,
-    //   cityName: req.body.cityName,
-    // });
-
-    citiesRef.doc(req.body.cityDocumentId)
+    citiesRef.doc(req.body.stationCity)
       .collection('stations')
-      .doc(req.body.stationDocumentId)
+      .doc()
       .set({
-        stationId: req.body.stationId,
         stationName: req.body.stationName,
-        stationPrices: req.body.stationPrices
+        stationPrices: req.body.stationPrices,
+        stationCity: req.body.stationCity
       });
-
+    console.log("City with Station Created");
     res.status(200).send({ message: 'City and Station Added' });
   },
   editCity: async (req, res) => {
@@ -59,34 +53,18 @@ const controller = {
       });
   },
   editCityStation: async (req, res) => {
-    let cityRef = citiesRef.doc(req.params.cityId);
-    let stationRef = cityRef.collection('stations').doc(req.params.stationId);
-    let transaction = database.runTransaction((t) => {
-      return t.get(stationRef).then((station) => {
-        if (station.data().stationId && req.body.stationId) {
-          let newStationId = req.body.stationId;
-          t.update(stationRef, { stationId: newStationId });
-        }
-
-        if (station.data().stationName && req.body.stationName) {
-          let newStationName = req.body.stationName;
-          t.update(stationRef, { stationName: newStationName });
-        }
-
-        if (station.data().stationPrices && req.body.stationPrices) {
-          let newStationPrices = req.body.stationPrices;
-          t.update(stationRef, { stationPrices: newStationPrices });
-        }
+    let cityRef = citiesRef.doc(req.params.cityName);
+    let stationRef = cityRef.collection('stations').where('stationName', '==', req.params.stationName).get();
+    stationRef.then((querySnapshot) => {
+      querySnapshot.forEach((station) => {
+        cityRef.collection('stations').doc(station.id).update({
+          stationCity: req.body.stationCity,
+          stationName: req.body.stationCity,
+          stationPrices: req.body.stationPrices
+        });
       });
-    })
-      .then((result) => {
-        console.log('Updated');
-        res.status(200).send({ message: 'Station Updated' });
-      })
-      .catch((err) => {
-        console.log('Error Updating', err);
-        res.status(500).send({ message: 'Station did not update!' });
-      })
+    });
+    res.status(200).send({ message: 'Updated!' });
   },
   delete: async (req, res) => {
     let cities = await citiesRef.get();
@@ -98,7 +76,12 @@ const controller = {
       })
     });
     citiesRef.doc(req.params.cityId).delete();
-    res.status(200).send({ message: 'Stations for ' + req.params.id + ' have just been deleted!' });
+    res.status(200).send({ message: 'Stations for have just been deleted!' });
+  },
+  deleteStationFromCity: async (req, res) => {
+    await database.collection('cities').doc(req.params.cityId).collection('stations').doc(req.params.stationId).delete();
+
+    res.status(200).send({ message: 'Station Deleted' });
   }
 };
 

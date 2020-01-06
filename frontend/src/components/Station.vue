@@ -7,6 +7,11 @@
       <div class="card-body">
         <form class="form" v-on:submit.prevent="onSubmit">
           <div class="form-group">
+            <label>City Name</label>
+            <input v-model="stationData.stationCity" type="text"
+              class="form-control ml-sm-2 mr-sm-4 my-2" required>
+          </div>
+          <div class="form-group">
             <label>Station Name</label>
             <input v-model="stationData.stationName" type="text"
               class="form-control ml-sm-2 mr-sm-4 my-2" required>
@@ -14,10 +19,10 @@
           <div class="form-group">
             <label>Station Prices</label>
             <input v-model="stationData.stationPrices" type="text"
-              class="form-control ml-sm-2 mr-sm-4 my-2" required>
+              class="form-control ml-sm-2 mr-sm-4 my-2">
           </div>
           <div class="ml-auto text-right">
-            <button type="submit" class="btn btn-primary my-2">Add</button>
+            <button type="submit" class="btn btn-success my-2">Add</button>
           </div>
         </form>
       </div>
@@ -34,6 +39,9 @@
             <thead>
             <tr>
               <th scope="col">
+                City
+              </th>
+              <th scope="col">
                 Station Name
               </th>
               <th>
@@ -42,14 +50,26 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="station in sortedStations" v-bind:key="station.stationId">
-              <template v-if="editId === station.stationId">
-                <td>{{editStationData.stationId}}</td>
-                <td><input v-model="editStationData.stationName" type="text"></td>
-                <td><input v-model="editStationData.stationPrices" type="text"></td>
+            <tr v-for="station in sortedStations" v-bind:key="station.stationData.stationCity">
+              <template v-if="editId === station.stationData.stationCity">
+                <td>
+                  <input v-model="editStationData.stationCity" type="text"
+                    :placeholder="station.stationData.stationCity">
+                </td>
+                <td>
+                  <input v-model="editStationData.stationName" type="text"
+                    :placeholder="station.stationData.stationName">
+                </td>
+                <td>
+                  <input v-model="editStationData.stationPrices" type="text"
+                    :placeholder="station.stationData.stationPrices">
+                </td>
                 <td>
                     <span class="icon">
-                      <i @click="onEditSubmit(station.stationId)" class="fa fa-check"></i>
+                      <i @click="onEditSubmit(
+                        station.stationData.stationCity,
+                        station.stationData.stationName
+                        )" class="fa fa-check"></i>
                     </span>
                   <span class="icon">
                       <i @click="onCancel" class="fa fa-ban"></i>
@@ -58,18 +78,25 @@
               </template>
               <template v-else>
                 <td>
-                  {{station.stationName}}
+                  {{station.stationData.stationCity}}
                 </td>
                 <td>
-                  {{station.stationPrices}}
+                  {{station.stationData.stationName}}
                 </td>
                 <td>
-
-                  <a href="#" class="icon">
-                    <i @click="onDelete(station.stationId)" class="fa fa-trash"></i>
+                  {{station.stationData.stationPrices}}
+                </td>
+                <td>
+                  <a href="#" class="icon mr-1">
+                    <i @click="onEdit(station.stationData)" class="fa fa-pencil"></i>
                   </a>
                   <a href="#" class="icon">
-                    <i @click="onEdit(station)" class="fa fa-pencil"></i>
+                    <i @click="onDelete(
+                      station.stationData.stationCity,
+                      station.stationIds,
+                      sortedStations
+                      )"
+                      class="fa fa-trash"></i>
                   </a>
                   <router-link
                     :to="{
@@ -78,7 +105,6 @@
                     }"
                     class="icon"
                   >
-                    <i class="fa fa-eye"></i>
                   </router-link>
                 </td>
               </template>
@@ -100,15 +126,19 @@ export default {
     return {
       editId: '',
       stationData: {
-        stationId: null,
         stationName: '',
         stationPrices: [],
+        stationCity: '',
       },
       editStationData: {
-        stationId: null,
         stationName: '',
         stationPrices: [],
+        stationCity: '',
       },
+      cityData: {
+        cityId: '',
+      },
+      stationIds: [],
       stations: [],
       cities: [],
     };
@@ -118,7 +148,10 @@ export default {
   },
   computed: {
     sortedStations() {
-      return this.stations.slice().sort((a, b) => a.id - b.id);
+      return this.stations.map((stations, i) => ({
+        stationIds: this.stationIds[i],
+        stationData: this.stations[i],
+      }));
     },
   },
   mounted() {
@@ -135,6 +168,7 @@ export default {
           await citiesRef.doc(city.id).collection('stations').get().then((snapshot) => {
             param.cities.push(city.id);
             snapshot.forEach((station) => {
+              param.stationIds.push(station.id);
               param.stations.push(station.data());
             });
           });
@@ -146,57 +180,52 @@ export default {
       const api = axios.create({
         withCredentials: true,
       });
-      api.post('http://localhost:8080/api/stations', this.stationData)
+      this.stationData.stationPrices = this.stationData.stationPrices.split(',').map(Number);
+      api.post('http://localhost:3000/api/cities/', this.stationData)
         .then((response) => {
           toastr.success(response.data.message);
           this.stationData.stationId = null;
           this.stationData.stationName = '';
           this.stationData.stationPrices = [];
-          this.getStations();
         })
         .catch((error) => {
           toastr.error(error.response.data.message);
         });
     },
-    onDelete(id) {
+    onDelete(cityId, stationId) {
       const api = axios.create({
         withCredentials: true,
       });
-      api.delete(`http://localhost:8080/api/stations/${id}`)
+      api.delete(`http://localhost:3000/api/cities/${cityId}/${stationId}`)
         .then((response) => {
           toastr.success(response.data.message);
-          this.getStations();
         })
         .catch((error) => {
           toastr.error(error.response.data.message);
         });
     },
     onEdit(station) {
-      this.editId = station.stationId;
-      this.stationData.id = station.stationId;
-      this.stationData.title = station.stationName;
-      this.stationData.description = station.stationPrices;
+      this.editId = station.stationCity;
+      this.editStationData.stationCity = station.stationCity;
+      this.editStationData.title = station.stationName;
+      this.editStationData.description = station.stationPrices;
     },
     onCancel() {
       this.editId = null;
-      this.stationData.stationId = null;
+      this.stationData.stationCity = null;
       this.stationData.stationName = '';
       this.stationData.stationPrices = [];
     },
-    onEditSubmit(id) {
+    onEditSubmit(stationCity, stationName) {
       const api = axios.create({
         withCredentials: true,
       });
       if (this.editStationData.stationName && this.editStationData.stationPrices) {
-        api.put(`http://localhost:8080/api/stations/${id}`, {
-          stationName: this.editStationData.stationName,
-          stationPrices: this.editStationData.stationPrices,
-        })
+        api.put(`http://localhost:3000/api/cities/${stationCity}/${stationName}`, this.editStationData)
           .then((response) => {
             toastr.success(response.data.message);
-            this.getStations();
             this.editId = null;
-            this.editStationData.stationId = null;
+            this.editStationData.stationCity = '';
             this.editStationData.stationName = '';
             this.editStationData.stationPrices = [];
           });
@@ -224,5 +253,9 @@ ul {
 .home {
   display: flex;
   flex-direction: column;
+}
+
+a {
+  color: #42b983;
 }
 </style>
